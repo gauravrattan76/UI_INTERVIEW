@@ -1,0 +1,104 @@
+Event bubbling , Event capturing and stop propagation, event delegation, event target vs event current target
+______________
+
+
+
+
+c.addEventListener('click', ()=>{
+    console.log('child callled')
+}, false)
+
+p.addEventListener('click', ()=>{
+    console.log('parent callled')
+}, false)
+
+
+
+If both false , the flow is from child to parent
+
+The third parameter in the addEventListener method—false in your example—specifies whether the event listener should be triggered during the capturing phase or the bubbling phase of event propagation.
+🔄 Event Propagation Phases
+When an event occurs in the Document Object Model (DOM), it goes through three phases:
+1. Capturing Phase: The event starts from the root of the DOM and travels down to the target element.
+2. Target Phase: The event reaches the target element.
+3. Bubbling Phase: The event bubbles up from the target element back to the root.
+
+
+
+The useCapture parameter in the addEventListener() method determines the phase during which the event listener is triggered:
+* true: The listener is invoked during the capturing phase, where the event travels from the root down to the target element.
+* false (default): The listener is invoked during the bubbling phase, where the event bubbles up from the target element to the root.
+
+
+If you omit the useCapture parameter or set it to false, the event listener will be triggered during the bubbling phase. This is the default behavior in JavaScript.
+
+
+
+element.addEventListener('click', handler); 
+
+
+
+c.addEventListener('click', ()=>{
+    console.log('child callled')
+}, true)
+
+p.addEventListener('click', ()=>{
+    console.log('parent callled')
+}, true)
+
+
+
+If both true , the flow is from  parent to child
+
+
+________
+
+
+Stopping propatagion-
+
+c.addEventListener('click', (event) => {
+  event.stopPropagation(); // Prevents the event from bubbling up
+  console.log('child called');
+}, false);
+
+
+__________
+
+
+Event delegation-
+
+
+🧭 Event Delegation
+Event Delegation is a technique that leverages event bubbling to handle events efficiently. Instead of attaching event listeners to multiple child elements, a single listener is attached to a common ancestor. This listener can then manage events triggered by its descendant elements
+
+
+
+<ul id="list">
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</ul>
+javascript
+Copy
+Edit
+document.getElementById('list').addEventListener('click', (event) => {
+  if (event.target.tagName === 'LI') {
+    console.log(`Clicked on ${event.target.textContent}`);
+  }
+});
+
+
+
+____________________
+
+
+When the button (#child) is clicked:Medium+1YouTube+1
+* event.target will be the <button> element, as it's the actual element that was clicked.Hotwire Discussion
+* event.currentTarget will be the <div> element, since that's where the event listener is attached.
+This behavior is due to event bubbling, where the event propagates from the target element up through its ancestors, allowing parent elements to handle events from their children.
+
+
+
+
+
+
