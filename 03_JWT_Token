@@ -1,0 +1,69 @@
+JWT Token and flow -
+__________________________-
+
+
+A JSON Web Token (JWT) is a compact, self-contained method for securely transmitting information between parties as a JSON object. It's widely used for authentication and authorization in web applications due to its stateless nature and efficiency.Frontegg+2JSON Web Tokens - jwt.io+2Auth0+2
+
+🔍 What Is a JWT?
+A JWT is a string composed of three parts, separated by dots (.):JSON Web Tokens - jwt.io+1DEV Community+1
+1. Header: Specifies the type of token and the signing algorithm used.DEV Community json CopyEdit   {
+2.   "alg": "HS256",
+3.   "typ": "JWT"
+4. }
+5.   
+
+1. Payload: Contains the claims, which are statements about an entity (typically, the user) and additional data.Wikipedia+1JSON Web Tokens - jwt.io+1 json CopyEdit   {
+2.   "sub": "1234567890",
+3.   "name": "John Doe",
+4.   "admin": true
+5. }
+6.   
+
+1. Signature: Used to verify the token's integrity and authenticity. It's created by encoding the header and payload, then signing them using the specified algorithm and a secret key.Wikipedia+3Wikipedia+3DEV Community+3 plaintext CopyEdit   HMACSHA256(
+2.   base64UrlEncode(header) + "." +
+3.   base64UrlEncode(payload),
+4.   secret
+5. )
+6.   
+
+The resulting JWT looks like this:
+plaintext
+CopyEdit
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.
+eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9
+.
+SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+
+🔐 How JWT Authentication Works
+1. User Login: The user provides credentials to the authentication server.
+2. Token Issuance: Upon successful authentication, the server issues a JWT containing user information and permissions.
+3. Client Stores Token: The client stores the JWT, typically in localStorage or sessionStorage.
+4. Accessing Protected Resources: For subsequent requests to protected routes or resources, the client includes the JWT in the Authorization header:Frontegg plaintext CopyEdit   Authorization: Bearer <token>
+5.   
+
+1. Token Verification: The server verifies the token's signature and extracts the payload to grant or deny access.
+
+📦 Types of Claims in JWT
+* Registered Claims: Predefined claims recommended to provide a set of useful, interoperable claims. Examples include:
+    * iss (Issuer): Identifies the principal that issued the JWT.
+    * sub (Subject): Identifies the subject of the JWT.
+    * aud (Audience): Identifies the recipients that the JWT is intended for.
+    * exp (Expiration Time): Identifies the expiration time on or after which the JWT must not be accepted for processing.
+    * nbf (Not Before): Identifies the time before which the JWT must not be accepted for processing.
+    * iat (Issued At): Identifies the time at which the JWT was issued.
+    * jti (JWT ID): Provides a unique identifier for the JWT.
+* Public Claims: Claims with names that are defined in the IANA JSON Web Token Registry or are defined as a URI to avoid collisions.Wikipedia+2JSON Web Tokens - jwt.io+2Wikipedia+2
+* Private Claims: Custom claims created to share information between parties that agree on using them and are neither registered nor public claims.JSON Web Tokens - jwt.io+1Frontegg+1
+
+✅ Advantages of Using JWT
+* Stateless Authentication: No need to store session information on the server, making it easier to scale applications.Frontegg+1SuperTokens+1
+* Compact and URL-Safe: JWTs are compact, making them efficient to transmit via URLs, headers, or cookies.Auth0
+* Self-Contained: All the necessary information is stored within the token, reducing the need for multiple database queries.
+
+⚠️ Considerations and Best Practices
+* Security: Always use HTTPS to prevent token interception.
+* Token Expiration: Set appropriate expiration times (exp) to reduce the risk of token misuse.Wikipedia
+* Token Revocation: Since JWTs are stateless, revoking them can be challenging. Implement strategies like short token lifespans and refresh tokens to mitigate this.
+* Sensitive Data: Avoid storing sensitive information in the JWT payload, as it's only base64 encoded and can be decoded easily.
