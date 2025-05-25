@@ -1,0 +1,114 @@
+Microfrontend-
+________________________
+
+
+Microfrontends are an architectural approach that extends the principles of microservices to the frontend. Instead of building a monolithic frontend, the application is divided into smaller, independent units—each responsible for a specific feature or functionality. These units, or microfrontends, can be developed, tested, and deployed independently, often by separate teams. This modularity enhances scalability, maintainability, and allows for parallel development.Bacancy+4LogRocket Blog+4Medium+4Bits and Pieces+3Codementor+3Medium+3
+
+
+____________________________________________________________
+
+
+
+
+Module Federation is a feature introduced in Webpack 5 that enables multiple, independently built and deployed applications to share code and dependencies at runtime. This is particularly beneficial in microfrontend architectures, where different teams can develop and deploy features autonomously.
+
+
+
+______________
+
+
+🧱 Key Concepts
+* Host Application: The main application that consumes modules from other applications.
+* Remote Application: An application that exposes modules to be consumed by other applications.
+* Shared Modules: Dependencies that are shared between the host and remote applications to avoid duplication and ensure consistency.GitHub+4Talentica+4DEV Community+4DEV Community
+
+
+
+___________________________
+
+
+⚙️ Setting Up Module Federation in React
+Let's walk through a basic setup involving two React applications: a Host and a Remote.
+1. Initialize Applications
+Create two separate React applications using your preferred method (e.g., create-react-app or manual setup).Medium
+
+
+
+2. Configure the Remote Application
+In the remote application's webpack.config.js, configure the ModuleFederationPlugin to expose components:
+javascript
+CopyEdit
+// remote/webpack.config.js
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+
+module.exports = {
+  // ... other configurations
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'remoteApp',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './Button': './src/Button',
+      },
+      shared: ['react', 'react-dom'],
+    }),
+  ],
+};
+
+
+
+In this configuration:
+* name: The name of the remote application.
+* filename: The name of the file where the remote's manifest will be exposed.
+* exposes: An object that maps exposed module names to their paths.
+* shared: An array of shared dependencies to avoid duplication.
+
+
+
+___________
+
+
+3. Configure the Host Application
+In the host application's webpack.config.js, configure the ModuleFederationPlugin to consume modules from the remote:
+javascript
+CopyEdit
+// host/webpack.config.js
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+
+module.exports = {
+  // ... other configurations
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'hostApp',
+      remotes: {
+        remoteApp: 'remoteApp@http://localhost:3001/remoteEntry.js',
+      },
+      shared: ['react', 'react-dom'],
+    }),
+  ],
+};
+_______________
+
+
+4. Use Remote Components in Host
+In the host application, you can now import and use components from the remote application:
+javascript
+CopyEdit
+// host/src/App.js
+import React from 'react';
+const RemoteButton = React.lazy(() => import('remoteApp/Button'));
+
+function App() {
+  return (
+    <div>
+      <h1>Host Application</h1>
+      <React.Suspense fallback="Loading Button...">
+        <RemoteButton />
+      </React.Suspense>
+    </div>
+  );
+}
+
+export default App;
+
+Here, React.lazy and React.Suspense are used to handle the asynchronous loading of the remote component.
