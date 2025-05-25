@@ -1,0 +1,60 @@
+Why we need a callback is to make sure that get executed in a sequence-
+
+
+
+function doSomethingAsync(callback) {
+    setTimeout(function() {
+      console.log("Async operation done!");
+      callback();
+    }, 1000);
+  }
+
+  // Define a callback function
+  function callbackFunction() {
+    console.log("Callback has been executed!");
+  }
+
+  // Calling the main function with the callback
+  doSomethingAsync(callbackFunction);
+
+
+
+
+
+
+function Fun1(cb)
+{
+    setTimeout(() => {
+        console.log('first callback')
+        cb()
+    }, 2000);
+}
+
+
+function Fun2(cb)
+{
+    setTimeout(() => {
+        console.log('second callback')
+        cb()
+    }, 2000);
+}
+
+
+function Fun3(cb)
+{
+    setTimeout(() => {
+        console.log('third callback')
+        cb()
+    }, 2000);
+}
+
+
+
+
+Fun1(() =>{
+    Fun2(() =>{
+        Fun3(() =>{
+            console.log('final call back hell')
+        })
+    })
+})
